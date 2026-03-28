@@ -1,54 +1,55 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import "./MainLayout.css";
+
+const navItems = [
+  { to: "/", label: "Dashboard" },
+  { to: "/leads", label: "Leads" },
+  { to: "/customers", label: "Customers" },
+  { to: "/jobs", label: "Jobs" },
+  { to: "/claims", label: "Claims" },
+  { to: "/calendar", label: "Calendar" },
+  { to: "/documents", label: "Documents" },
+  { to: "/invoices", label: "Invoices" },
+  { to: "/settings", label: "Branding" },
+];
 
 export default function MainLayout({ children }) {
+  const location = useLocation();
+
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      
-      {/* Sidebar */}
-      <div style={{
-        width: "250px",
-        background: "#1e3a8a",
-        color: "white",
-        padding: "20px"
-      }}>
-        <h2>ProjectIQ</h2>
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand-block">
+          <div className="brand-title">ProjectIQ</div>
+          <div className="brand-subtitle">Roofing Operations</div>
+        </div>
 
-        <nav style={{ marginTop: "20px" }}>
-          <div><Link to="/" style={link}>Dashboard</Link></div>
-          <div><Link to="/leads" style={link}>Leads</Link></div>
-          <div><Link to="/customers" style={link}>Customers</Link></div>
-          <div><Link to="/jobs" style={link}>Jobs</Link></div>
-          <div><Link to="/claims" style={link}>Claims</Link></div>
-          <div><Link to="/calendar" style={link}>Calendar</Link></div>
-          <div><Link to="/documents" style={link}>Documents</Link></div>
-          <div><Link to="/invoices" style={link}>Invoices</Link></div>
-          <div><Link to="/settings" style={link}>Settings</Link></div>
+        <nav className="nav-list">
+          {navItems.map((item) => {
+            const active = location.pathname === item.to;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`nav-link ${active ? "active" : ""}`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
-      </div>
+      </aside>
 
-      {/* Main content */}
-      <div style={{ flex: 1 }}>
-        
-        {/* Header */}
-        <div style={{
-          padding: "15px",
-          borderBottom: "1px solid #ddd"
-        }}>
-          <strong>ProjectIQ Dashboard</strong>
-        </div>
+      <main className="main-panel">
+        <header className="topbar">
+          <div>
+            <div className="topbar-title">ProjectIQ</div>
+            <div className="topbar-subtitle">Phase 1 foundation</div>
+          </div>
+        </header>
 
-        {/* Page content */}
-        <div style={{ padding: "20px" }}>
-          {children}
-        </div>
-      </div>
+        <section className="page-content">{children}</section>
+      </main>
     </div>
   );
 }
-
-const link = {
-  color: "white",
-  textDecoration: "none",
-  display: "block",
-  padding: "8px 0"
-};

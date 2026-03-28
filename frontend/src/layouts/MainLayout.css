@@ -1,0 +1,87 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #1d2433;
+}
+
+.sidebar {
+  width: 250px;
+  background: linear-gradient(180deg, #163a70 0%, #224f92 100%);
+  color: #ffffff;
+  padding: 24px 18px;
+  box-sizing: border-box;
+}
+
+.brand-block {
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.18);
+  margin-bottom: 20px;
+}
+
+.brand-title {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.brand-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-link {
+  color: #ffffff;
+  text-decoration: none;
+  padding: 11px 12px;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  background: rgba(255,255,255,0.15);
+}
+
+.main-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e9f2;
+  padding: 18px 24px;
+}
+
+.topbar-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.topbar-subtitle {
+  color: #6a7487;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.page-content {
+  padding: 24px;
+}
+
+@media (max-width: 900px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+}

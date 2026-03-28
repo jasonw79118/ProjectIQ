@@ -1,4 +1,161 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1d2433;
+  background: #f5f7fb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+}
+
+h1, h2, h3, p {
+  margin-top: 0;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+
+.page-header p {
+  color: #6a7487;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.two-column-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #e5e9f2;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 8px rgba(24, 37, 63, 0.05);
+}
+
+.stat-card .card-label {
+  color: #6a7487;
+  font-size: 14px;
+}
+
+.stat-card .card-value {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 10px 0 6px;
+}
+
+.stat-card .card-detail,
+.muted {
+  color: #6a7487;
+  font-size: 14px;
+}
+
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-row label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cfd7e6;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.form-row.split {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+button {
+  background: #163a70;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.form-helper,
+.status-message {
+  color: #6a7487;
+  font-size: 14px;
+}
+
+.list-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.list-item {
+  border: 1px solid #e5e9f2;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.list-item-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pill {
+  background: #eef4ff;
+  color: #163a70;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .two-column-grid,
+  .form-row.split {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions,
+  .list-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

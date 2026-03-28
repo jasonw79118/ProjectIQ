@@ -1,7 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 import MainLayout from "./layouts/MainLayout";
-
 import Dashboard from "./pages/Dashboard";
 import Leads from "./pages/Leads";
 import Customers from "./pages/Customers";
@@ -11,10 +9,11 @@ import Calendar from "./pages/Calendar";
 import Documents from "./pages/Documents";
 import Invoices from "./pages/Invoices";
 import Settings from "./pages/Settings";
+import "./index.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ProjectIQ/">
       <MainLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />

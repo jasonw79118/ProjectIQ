@@ -1,3 +1,1 @@
-export default function Settings() {
-  return <h1>Branding / Settings</h1>;
-}
+export default function Settings() { return <h1>Branding / Settings</h1>; }
