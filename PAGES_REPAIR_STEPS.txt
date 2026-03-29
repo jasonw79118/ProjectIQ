@@ -1,0 +1,55 @@
+ProjectIQ Pages Repair Pack
+
+WHAT THIS FIXES
+- Stops GitHub Pages from trying to use Jekyll /docs publishing
+- Adds a GitHub Actions deployment workflow for the Vite frontend
+- Sets the Vite base path to /ProjectIQ/
+- Adds a .nojekyll file for the published static site
+
+FILES IN THIS PACK
+- frontend/vite.config.js
+- .github/workflows/deploy-pages.yml
+- frontend/public/.nojekyll
+- PAGES_REPAIR_STEPS.txt
+
+IMPORTANT
+This pack assumes:
+- the GitHub repo name is exactly: ProjectIQ
+- the Vite app lives in: frontend
+- npm run build creates: frontend/dist
+- package.json already exists in frontend and contains a build script
+
+SETUP STEPS
+1. Unzip this pack into:
+   C:\Users\jason\ProjectIQ
+   and allow overwrite / merge.
+
+2. In GitHub:
+   Repo -> Settings -> Pages
+   Set Source to: GitHub Actions
+
+3. In PowerShell:
+   cd C:\Users\jason\ProjectIQ
+   git add .
+   git commit -m "Repair GitHub Pages deployment"
+   git push
+
+4. On GitHub:
+   Repo -> Actions
+   Watch the workflow named:
+   Deploy ProjectIQ to GitHub Pages
+
+5. After it succeeds, open:
+   https://jasonw79118.github.io/ProjectIQ/
+
+LOCAL CHECK
+Before pushing, you can test the build locally:
+   cd C:\Users\jason\ProjectIQ\frontend
+   npm install
+   npm run build
+
+If build works, dist should be created inside frontend.
+
+IF GITHUB STILL TRIES TO BUILD WITH JEKYLL
+That means Pages is still set to Deploy from a branch.
+Change it to GitHub Actions.
