@@ -1,0 +1,25 @@
+ProjectIQ Leads Fix Pack
+
+1. Unzip this into C:\Users\jason\ProjectIQ and allow overwrite.
+2. Start the backend:
+   cd C:\Users\jason\ProjectIQ\backend
+   .\venv\Scripts\activate
+   uvicorn app.main:app --reload
+3. Test the backend in a browser:
+   http://127.0.0.1:8000/health
+   You should see: {"status":"ok"}
+4. Start the frontend in another PowerShell window:
+   cd C:\Users\jason\ProjectIQ\frontend
+   npm install
+   npm run dev
+5. Open:
+   http://localhost:5173/ProjectIQ/
+6. Push the fix:
+   cd C:\Users\jason\ProjectIQ
+   git add .
+   git commit -m "Fix leads API connection and CORS"
+   git push
+
+Notes:
+- This pack uses a temporary in-memory leads list so the page always has test data.
+- Data resets if the backend restarts. We will move to SQLite/Postgres in the next phase.
