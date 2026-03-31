@@ -1,1 +1,1 @@
-export default function Claims() { return <h1>Claims</h1>; }
+export default function Claims(){ return <div className="card"><h2>Claims</h2><p>Claims module is next.</p></div>; }
