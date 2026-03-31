@@ -1,0 +1,27 @@
+ProjectIQ Phase 2 pack
+
+What this pack adds:
+- SQLite-backed lead persistence in backend/projectiq.db
+- Persistent GET /leads and POST /leads
+- POST /leads/{id}/convert to create a customer from a lead
+- GET /customers endpoint
+- Improved Salesforce-style Leads page
+- Customers page now loads real customer records from backend
+
+How to use:
+1. Unzip into C:\Users\jason\ProjectIQ and allow overwrite.
+2. Restart backend:
+   cd C:\Users\jason\ProjectIQ\backend
+   .\venv\Scripts\activate
+   uvicorn app.main:app --reload
+3. Restart frontend:
+   cd C:\Users\jason\ProjectIQ\frontend
+   npm install
+   npm run dev
+4. Test backend:
+   http://127.0.0.1:8000/health
+5. In the app, add a lead, then click Convert. Open Customers to confirm it appears.
+
+Notes:
+- Data now persists in backend/projectiq.db
+- If you want a fresh database later, stop backend and delete backend/projectiq.db

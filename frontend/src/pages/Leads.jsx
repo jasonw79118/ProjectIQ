@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import API_BASE from "../config/api";
+import { API_BASE_URL } from "../config/api";
 
 const emptyForm = {
   first_name: "",
@@ -8,35 +8,31 @@ const emptyForm = {
   email: "",
   property_address: "",
   city: "",
-  state: "",
+  state: "TX",
   zip: "",
-  status: "New",
+  source: "Website",
+  status: "New Lead",
   notes: "",
 };
 
 export default function Leads() {
+  const [form, setForm] = useState(emptyForm);
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   async function loadLeads() {
-    setLoading(true);
-    setError("");
-
     try {
-      const response = await fetch(`${API_BASE}/leads`);
-      if (!response.ok) {
-        throw new Error(`Request failed with ${response.status}`);
-      }
+      setLoading(true);
+      setError("");
+      const response = await fetch(`${API_BASE_URL}/leads`);
+      if (!response.ok) throw new Error("Failed to load leads.");
       const data = await response.json();
-      setLeads(Array.isArray(data) ? data : []);
+      setLeads(data);
     } catch (err) {
-      setError(
-        `Could not load leads from ${API_BASE}/leads. Make sure the FastAPI backend is running on port 8000.`
-      );
-      console.error(err);
+      setError("Could not load leads. Make sure the FastAPI backend is running on port 8000.");
     } finally {
       setLoading(false);
     }
@@ -46,157 +42,208 @@ export default function Leads() {
     loadLeads();
   }, []);
 
-  function updateField(event) {
+  function onChange(event) {
     const { name, value } = event.target;
-    setForm((current) => ({ ...current, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleSubmit(event) {
+  async function onSubmit(event) {
     event.preventDefault();
     setSaving(true);
     setError("");
+    setMessage("");
 
     try {
-      const response = await fetch(`${API_BASE}/leads`, {
+      const response = await fetch(`${API_BASE_URL}/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-
-      if (!response.ok) {
-        throw new Error(`Save failed with ${response.status}`);
-      }
-
+      if (!response.ok) throw new Error("Save failed");
       setForm(emptyForm);
+      setMessage("Lead saved.");
       await loadLeads();
     } catch (err) {
-      setError(`Could not save lead to ${API_BASE}/leads.`);
-      console.error(err);
+      setError("Lead save failed. Check that the FastAPI backend is running.");
     } finally {
       setSaving(false);
     }
   }
 
-  return (
-    <div>
-      <h1 style={{ marginTop: 0 }}>Leads</h1>
-      <p>Track prospects and new opportunities.</p>
+  async function convertLead(leadId) {
+    setError("");
+    setMessage("");
+    try {
+      const response = await fetch(`${API_BASE_URL}/leads/${leadId}/convert`, { method: "POST" });
+      if (!response.ok) throw new Error("Convert failed");
+      const data = await response.json();
+      setMessage(`Lead converted to customer: ${data.customer.display_name}`);
+      await loadLeads();
+    } catch (err) {
+      setError("Could not convert the lead into a customer.");
+    }
+  }
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: "24px" }}>
-        <section style={cardStyle}>
-          <h2 style={sectionTitle}>New Lead</h2>
-          <form onSubmit={handleSubmit}>
-            <div style={grid2}>
-              <input name="first_name" placeholder="First name" value={form.first_name} onChange={updateField} style={inputStyle} />
-              <input name="last_name" placeholder="Last name" value={form.last_name} onChange={updateField} style={inputStyle} />
-              <input name="phone" placeholder="Phone" value={form.phone} onChange={updateField} style={inputStyle} />
-              <input name="email" placeholder="Email" value={form.email} onChange={updateField} style={inputStyle} />
-              <input name="property_address" placeholder="Property address" value={form.property_address} onChange={updateField} style={{ ...inputStyle, gridColumn: "1 / span 2" }} />
-              <input name="city" placeholder="City" value={form.city} onChange={updateField} style={inputStyle} />
-              <input name="state" placeholder="State" value={form.state} onChange={updateField} style={inputStyle} />
-              <input name="zip" placeholder="ZIP" value={form.zip} onChange={updateField} style={inputStyle} />
-              <select name="status" value={form.status} onChange={updateField} style={inputStyle}>
-                <option>New</option>
+  return (
+    <div className="page-stack">
+      <div className="page-header">
+        <div>
+          <h1>Leads</h1>
+          <p>Track incoming prospects and convert them into customer records.</p>
+        </div>
+      </div>
+
+      {error ? <div className="alert-error">{error}</div> : null}
+      {message ? <div className="alert-success">{message}</div> : null}
+
+      <div className="card-grid card-grid-2">
+        <section className="card">
+          <div className="card-header">
+            <h2>New Lead</h2>
+            <span className="badge">Phase 2</span>
+          </div>
+          <form className="form-grid" onSubmit={onSubmit}>
+            <label>
+              First Name
+              <input name="first_name" value={form.first_name} onChange={onChange} required />
+            </label>
+            <label>
+              Last Name
+              <input name="last_name" value={form.last_name} onChange={onChange} required />
+            </label>
+            <label>
+              Phone
+              <input name="phone" value={form.phone} onChange={onChange} />
+            </label>
+            <label>
+              Email
+              <input name="email" value={form.email} onChange={onChange} />
+            </label>
+            <label className="full-span">
+              Property Address
+              <input name="property_address" value={form.property_address} onChange={onChange} />
+            </label>
+            <label>
+              City
+              <input name="city" value={form.city} onChange={onChange} />
+            </label>
+            <label>
+              State
+              <input name="state" value={form.state} onChange={onChange} />
+            </label>
+            <label>
+              ZIP
+              <input name="zip" value={form.zip} onChange={onChange} />
+            </label>
+            <label>
+              Source
+              <select name="source" value={form.source} onChange={onChange}>
+                <option>Website</option>
+                <option>Referral</option>
+                <option>Door Knock</option>
+                <option>Social</option>
+                <option>Phone Call</option>
+              </select>
+            </label>
+            <label>
+              Status
+              <select name="status" value={form.status} onChange={onChange}>
+                <option>New Lead</option>
                 <option>Contacted</option>
                 <option>Inspection Scheduled</option>
+                <option>Estimate Sent</option>
                 <option>Claim Pending</option>
-                <option>Approved</option>
-                <option>Lost</option>
               </select>
-              <textarea name="notes" placeholder="Notes" value={form.notes} onChange={updateField} style={{ ...inputStyle, gridColumn: "1 / span 2", minHeight: 110, resize: "vertical" }} />
-            </div>
-            <div style={{ marginTop: 16, display: "flex", gap: 12 }}>
-              <button type="submit" disabled={saving} style={primaryButton}>
+            </label>
+            <label className="full-span">
+              Notes
+              <textarea name="notes" rows="4" value={form.notes} onChange={onChange} />
+            </label>
+            <div className="full-span actions-row">
+              <button className="primary-btn" type="submit" disabled={saving}>
                 {saving ? "Saving..." : "Save Lead"}
               </button>
-              <button type="button" onClick={loadLeads} style={secondaryButton}>Refresh</button>
             </div>
           </form>
         </section>
 
-        <section style={cardStyle}>
-          <h2 style={sectionTitle}>Lead List</h2>
-          {loading ? <p>Loading leads...</p> : null}
-          {error ? <p style={{ color: "#b42318" }}>{error}</p> : null}
-          {!loading && !error && leads.length === 0 ? <p>No leads yet.</p> : null}
-          {!loading && leads.length > 0 ? (
-            <div style={{ overflowX: "auto" }}>
-              <table style={tableStyle}>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {leads.map((lead) => (
-                    <tr key={lead.id}>
-                      <td>{`${lead.first_name || ""} ${lead.last_name || ""}`.trim() || "—"}</td>
-                      <td>{lead.phone || "—"}</td>
-                      <td>{lead.property_address || "—"}</td>
-                      <td>{lead.status || "—"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        <section className="card">
+          <div className="card-header">
+            <h2>Lead Summary</h2>
+            <span className="badge">{leads.length} total</span>
+          </div>
+          <div className="metrics-grid">
+            <div className="metric-card">
+              <span className="metric-label">Open Leads</span>
+              <strong>{leads.filter((lead) => lead.status !== "Converted").length}</strong>
             </div>
-          ) : null}
+            <div className="metric-card">
+              <span className="metric-label">Converted</span>
+              <strong>{leads.filter((lead) => lead.status === "Converted").length}</strong>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Inspection Scheduled</span>
+              <strong>{leads.filter((lead) => lead.status === "Inspection Scheduled").length}</strong>
+            </div>
+            <div className="metric-card">
+              <span className="metric-label">Website Source</span>
+              <strong>{leads.filter((lead) => lead.source === "Website").length}</strong>
+            </div>
+          </div>
         </section>
       </div>
+
+      <section className="card">
+        <div className="card-header">
+          <h2>Lead List</h2>
+          <button className="secondary-btn" type="button" onClick={loadLeads}>Refresh</button>
+        </div>
+        {loading ? (
+          <p>Loading leads...</p>
+        ) : (
+          <div className="table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Address</th>
+                  <th>Status</th>
+                  <th>Source</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.length === 0 ? (
+                  <tr>
+                    <td colSpan="6">No leads yet.</td>
+                  </tr>
+                ) : (
+                  leads.map((lead) => (
+                    <tr key={lead.id}>
+                      <td>{lead.first_name} {lead.last_name}</td>
+                      <td>{lead.phone || "-"}</td>
+                      <td>{lead.property_address || "-"}</td>
+                      <td><span className="status-pill">{lead.status}</span></td>
+                      <td>{lead.source || "-"}</td>
+                      <td>
+                        <button
+                          className="table-action-btn"
+                          type="button"
+                          onClick={() => convertLead(lead.id)}
+                          disabled={lead.status === "Converted"}
+                        >
+                          {lead.status === "Converted" ? "Converted" : "Convert"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
-
-const cardStyle = {
-  background: "#ffffff",
-  border: "1px solid #d8dde6",
-  borderRadius: 10,
-  boxShadow: "0 2px 8px rgba(16, 24, 40, 0.04)",
-  padding: 20,
-};
-
-const sectionTitle = {
-  marginTop: 0,
-  marginBottom: 16,
-  fontSize: 20,
-};
-
-const grid2 = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gap: 12,
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px 12px",
-  borderRadius: 8,
-  border: "1px solid #c9cfd6",
-  boxSizing: "border-box",
-  fontSize: 14,
-};
-
-const primaryButton = {
-  background: "#0176d3",
-  color: "#fff",
-  border: "none",
-  borderRadius: 8,
-  padding: "10px 16px",
-  cursor: "pointer",
-};
-
-const secondaryButton = {
-  background: "#fff",
-  color: "#16325c",
-  border: "1px solid #c9cfd6",
-  borderRadius: 8,
-  padding: "10px 16px",
-  cursor: "pointer",
-};
-
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-};
